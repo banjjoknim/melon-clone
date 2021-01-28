@@ -18,4 +18,5 @@ public interface MusicLikedUserRepository extends JpaRepository<MusicLikedUser, 
     Integer deleteMusicLikedUserById(@Param("musicId") Long musicId, @Param("userId") Long userId);
 
     boolean existsMusicLikedUserByMusicIdAndUserId(Long musicId, Long userId);
+
 }

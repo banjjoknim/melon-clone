@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import shop.rp2.colt.config.BaseResponse;
 import shop.rp2.colt.src.album.models.*;
+import shop.rp2.colt.src.singer.exception.NotFoundSingerException;
 import shop.rp2.colt.src.user.models.GetAlbumLikedUserRes;
 
 import java.util.List;
@@ -29,12 +30,14 @@ public class AlbumController {
     }
 
     // 앨범 생성
-    @PostMapping("/new")
+    @PostMapping("/new-album")
     public BaseResponse<Long> postNewAlbum(@RequestBody Album album) {
         try {
             return new BaseResponse<>(SUCCESS_POST_ALBUM, albumService.createAlbum(album));
         } catch (IllegalArgumentException e) {
             return new BaseResponse<>(FAILED_TO_POST_ALBUM);
+        } catch (NotFoundSingerException e){
+            return new BaseResponse<>(NOT_FOUND_SINGER);
         }
     }
 
@@ -58,16 +61,14 @@ public class AlbumController {
 
     // 앨범 삭제
 
-    // 앨범 좋아요
-    @PostMapping("/{albumId}/like")
-    public BaseResponse<Long> postLikedOnAlbum(@PathVariable Long albumId, @RequestBody PostAlbumLikedUserReq request) {
-        return new BaseResponse<>(SUCCESS_POST_LIKED_ON_ALBUM, albumService.createLikeOnAlbumById(albumId, request));
-    }
-
-    // 앨범 좋아요 취소
-    @DeleteMapping("/{albumId}/like")
-    public BaseResponse<Long> deleteLikedOnAlbum(@PathVariable Long albumId, @RequestBody DeleteAlbumLikedUserReq request) {
-        return new BaseResponse<>(SUCCESS_DELETE_LIKED_ON_ALBUM, albumService.deleteLikedOnAlbumById(albumId, request));
+    // 앨범 좋아요 및 취소
+    @PutMapping("/{albumId}/like")
+    public BaseResponse<Long> postLikedOnAlbum(@PathVariable Long albumId, @RequestBody PutAlbumLikedUserReq request) {
+        try {
+            return new BaseResponse<>(SUCCESS_PUT_LIKED_ON_ALBUM, albumService.createLikeOnAlbumById(albumId, request));
+        } catch (IllegalArgumentException e) {
+            return new BaseResponse<>(NOT_FOUND_ALBUM);
+        }
     }
 
     // 앨범 좋아요 한 사람들 조회

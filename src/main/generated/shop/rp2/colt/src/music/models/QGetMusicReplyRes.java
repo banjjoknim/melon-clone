@@ -13,8 +13,8 @@ public class QGetMusicReplyRes extends ConstructorExpression<GetMusicReplyRes> {
 
     private static final long serialVersionUID = 228793774L;
 
-    public QGetMusicReplyRes(com.querydsl.core.types.Expression<String> nickname, com.querydsl.core.types.Expression<String> comment, com.querydsl.core.types.Expression<Long> likedCount, com.querydsl.core.types.Expression<Long> dislikedCount, com.querydsl.core.types.Expression<Long> hasReplyCount) {
-        super(GetMusicReplyRes.class, new Class<?>[]{String.class, String.class, long.class, long.class, long.class}, nickname, comment, likedCount, dislikedCount, hasReplyCount);
+    public QGetMusicReplyRes(com.querydsl.core.types.Expression<String> nickname, com.querydsl.core.types.Expression<String> comment, com.querydsl.core.types.Expression<String> createdAt, com.querydsl.core.types.Expression<Long> likedCount, com.querydsl.core.types.Expression<Long> dislikedCount) {
+        super(GetMusicReplyRes.class, new Class<?>[]{String.class, String.class, String.class, long.class, long.class}, nickname, comment, createdAt, likedCount, dislikedCount);
     }
 
 }

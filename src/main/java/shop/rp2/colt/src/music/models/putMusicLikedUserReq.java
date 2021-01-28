@@ -1,11 +1,11 @@
-package shop.rp2.colt.src.album.models;
+package shop.rp2.colt.src.music.models;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class DeleteAlbumLikedUserReq {
+public class putMusicLikedUserReq {
 
     private Long userId;
 }

@@ -16,9 +16,6 @@ public class GetMusicRes {
     private String soundQuality;
     private Long likedUserCount;
     private Long replyCount;
-    private GetMusicLyricsRes getMusicLyricsRes; // 가사 메뉴가 가진 데이터
-    private GetMusicInfoRes getMusicInfoRes; // 상세정보 메뉴가 가진 데이터
-    private GetMusicReplyRes getMusicReplyRes; // 댓글 메뉴가 가진 데이터
 
     @QueryProjection
     public GetMusicRes(Long musicId, String musicTitle, String albumTitle, String albumImage, String singerName, String singerImage, String genreName, String soundQuality, Long likedUserCount, Long replyCount) {

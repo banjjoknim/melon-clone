@@ -160,3 +160,5 @@ $RECYCLE.BIN/
 
 .gradle
 .idea
+src/main/resources/application.yml
+src/main/resources/logback-spring.xml

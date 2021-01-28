@@ -4,12 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import shop.rp2.colt.config.FlagYN;
-import shop.rp2.colt.src.music.models.PostMusicLikedUserReq;
 import shop.rp2.colt.src.music.models.PutMusicReq;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @SpringBootTest
 class MusicServiceTest {

@@ -3,6 +3,7 @@ package shop.rp2.colt.src.album.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.format.annotation.DateTimeFormat;
 import shop.rp2.colt.config.BaseTimeEntity;
 
 import javax.persistence.*;
@@ -39,6 +40,7 @@ public class Album extends BaseTimeEntity {
     private String soundQuality;
 
     @Column(name = "release_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime releaseDate;
 
     @Column(name = "total_score")

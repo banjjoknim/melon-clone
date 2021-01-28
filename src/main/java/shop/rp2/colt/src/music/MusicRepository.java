@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import shop.rp2.colt.src.music.models.Music;
-
-import javax.transaction.Transactional;
 
 @Repository
 public interface MusicRepository extends JpaRepository<Music, Long> {
@@ -17,4 +16,5 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     @Query(value = "update Music m set m.musicTitle = :musicTitle, m.lyrics = :lyrics, m.playtime = :playtime where m.musicId = :musicId")
     Integer updateMusicById(@Param("musicId") Long musicId, @Param("musicTitle") String musicTitle, @Param("lyrics") String lyrics, @Param("playtime") String playtime);
 
+    boolean existsMusicByMusicId(Long musicId);
 }

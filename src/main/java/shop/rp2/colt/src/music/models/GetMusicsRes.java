@@ -13,10 +13,10 @@ public class GetMusicsRes {
     private String singerName;
     private String albumImage;
     private String country;
-    private LocalDateTime registedDate;
+    private String registedDate;
 
     @QueryProjection
-    public GetMusicsRes(Long musicId, String musicTitle, String singerName, String albumImage, String country, LocalDateTime registedDate) {
+    public GetMusicsRes(Long musicId, String musicTitle, String singerName, String albumImage, String country, String registedDate) {
         this.musicId = musicId;
         this.musicTitle = musicTitle;
         this.singerName = singerName;

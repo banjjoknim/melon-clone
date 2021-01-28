@@ -25,13 +25,15 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath email = createString("email");
 
-    public final StringPath gender = createString("gender");
+    public final EnumPath<shop.rp2.colt.config.Gender> gender = createEnum("gender", shop.rp2.colt.config.Gender.class);
 
     public final EnumPath<shop.rp2.colt.config.FlagYN> isExit = createEnum("isExit", shop.rp2.colt.config.FlagYN.class);
 
     public final StringPath nickname = createString("nickname");
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
+
+    public final StringPath userIdName = createString("userIdName");
 
     public final StringPath userImage = createString("userImage");
 
