@@ -1,6 +1,5 @@
 package shop.rp2.colt.src.album;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import shop.rp2.colt.src.album.models.GetAlbumsRes;
 import shop.rp2.colt.src.album.models.QGetAlbumsRes;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static shop.rp2.colt.src.album.models.QAlbum.album;

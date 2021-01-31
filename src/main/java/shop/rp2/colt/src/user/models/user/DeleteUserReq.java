@@ -7,6 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeleteUserReq {
 
-    private Long userId;
     private String password;
 }

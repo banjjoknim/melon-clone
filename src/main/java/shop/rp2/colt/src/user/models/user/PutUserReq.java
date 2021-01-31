@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PutUserReq {
 
-    private Long userId;
     private String password;
     private String email;
     private String cellPhone;

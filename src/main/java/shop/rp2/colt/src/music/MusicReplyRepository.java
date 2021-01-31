@@ -18,4 +18,6 @@ public interface MusicReplyRepository extends JpaRepository<MusicReply, Long> {
 
     @Transactional
     Integer deleteByReplyId(Long replyId);
+
+    boolean existsMusicReplyByMusicIdAndReplyId(Long musicId, Long replyId);
 }

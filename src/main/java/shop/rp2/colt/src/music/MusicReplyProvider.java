@@ -6,9 +6,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import shop.rp2.colt.src.music.exception.NotFoundMusicException;
 import shop.rp2.colt.src.music.models.GetMusicReplyRes;
 import shop.rp2.colt.src.music.models.QGetMusicReplyRes;
-import shop.rp2.colt.src.music.models.QMusicReply;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class MusicReplyProvider {
     public List<GetMusicReplyRes> retrieveMusicReplyById(Long musicId) {
 
         if (!musicRepository.existsMusicByMusicId(musicId)) {
-            throw new IllegalArgumentException("존재하지 않는 곡입니다.");
+            throw new NotFoundMusicException("존재하지 않는 곡입니다.");
         }
 
         return jpaQueryFactory

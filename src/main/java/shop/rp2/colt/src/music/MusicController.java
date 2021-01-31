@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.web.bind.annotation.*;
+import shop.rp2.colt.config.BaseException;
 import shop.rp2.colt.config.BaseResponse;
 import shop.rp2.colt.src.album.exception.NotFoundAlbumException;
 import shop.rp2.colt.src.music.exception.NotFoundMusicException;
@@ -95,22 +96,28 @@ public class MusicController {
     }
 
     // 곡 좋아요 / 좋아요 취소
-    // todo : 곡 좋아요 , 좋아요 취소 HTTP METHOD 어떤걸 사용해야 하는지 질문하자.
+    // todo: 곡 좋아요, 좋아요 취소 구분로직 추가할 것.
     @PutMapping("/{musicId}/likes")
-    public BaseResponse<Long> putLikedOnMusic(@PathVariable Long musicId, @RequestBody putMusicLikedUserReq request) {
+    public BaseResponse<Long> putLikedOnMusic(@PathVariable Long musicId) {
         try {
-            return new BaseResponse<>(SUCCESS_POST_OR_DELETE_LIKED_ON_MUSIC, musicService.updateLikeOnMusicById(musicId, request));
+            return new BaseResponse<>(SUCCESS_POST_OR_DELETE_LIKED_ON_MUSIC, musicService.updateLikeOnMusicById(musicId));
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals(NOT_FOUND_USER)) {
+                return new BaseResponse<>(NOT_FOUND_USER);
+            }
             return new BaseResponse<>(NOT_FOUND_MUSIC);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 
     // 곡 좋아요 한 유저들 조회
+    // todo: 해당 유저가 가진 플레이리스트 수 얻어오는 로직 추가할 것.
     @GetMapping("/{musicId}/liked-users")
     public BaseResponse<List<GetMusicLikedUserRes>> getMusicLikedUsers(@PathVariable Long musicId) {
         try {
             return new BaseResponse<>(SUCCESS_GET_MUSIC_LIKED_USERS, musicProvider.retrieveMusicLikedUsers(musicId));
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
         }
     }
@@ -120,7 +127,7 @@ public class MusicController {
     public BaseResponse<List<GetMusicReplyRes>> getMusicReplys(@PathVariable Long musicId) {
         try {
             return new BaseResponse<>(SUCCESS_GET_MUSIC_REPLYS, musicReplyProvider.retrieveMusicReplyById(musicId));
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
         }
     }
@@ -134,6 +141,8 @@ public class MusicController {
             return new BaseResponse<>(NOT_INPUT_CONTENT);
         } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 
@@ -143,19 +152,35 @@ public class MusicController {
         try {
             return new BaseResponse<>(SUCCESS_PUT_MUSIC_REPLY, musicReplyService.updateMusicReplyById(musicId, replyId, putMusicReplyReq));
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals(NOT_FOUND_MUSIC_REPLY.getMessage())) {
+                return new BaseResponse<>(NOT_FOUND_MUSIC_REPLY);
+            }
+            if (e.getMessage().equals(NOT_INPUT_CONTENT.getMessage())) {
+                return new BaseResponse<>(NOT_INPUT_CONTENT);
+            }
             return new BaseResponse<>(HAS_NOT_AUTHORITY);
         } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 
     // 곡 댓글 제거
     @DeleteMapping("/{musicId}/replys/{replyId}")
-    public BaseResponse<Long> deleteReplyInMusic(@PathVariable Long replyId, @RequestBody DeleteMusicReplyReq request) {
+    public BaseResponse<Long> deleteReplyInMusic(@PathVariable Long musicId, @PathVariable Long replyId) {
         try {
-            return new BaseResponse<>(SUCCESS_DELETE_MUSIC_REPLY, musicReplyService.deleteMusicReplyById(replyId, request));
+            return new BaseResponse<>(SUCCESS_DELETE_MUSIC_REPLY, musicReplyService.deleteMusicReplyById(musicId, replyId));
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals(NOT_FOUND_MUSIC.getMessage())) {
+                return new BaseResponse<>(NOT_FOUND_MUSIC);
+            }
+            if (e.getMessage().equals(NOT_FOUND_MUSIC_REPLY)) {
+                return new BaseResponse<>(NOT_FOUND_MUSIC_REPLY);
+            }
             return new BaseResponse<>(HAS_NOT_AUTHORITY);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 
@@ -166,8 +191,12 @@ public class MusicController {
             return new BaseResponse<>(SUCCESS_POST_REPLY_ON_MUSIC_REPLY, musicReplyService.createReplyOnMusicReply(musicId, replyId, request));
         } catch (IllegalArgumentException e) {
             return new BaseResponse<>(NOT_INPUT_CONTENT);
+        } catch (NotFoundMusicException e) {
+            return new BaseResponse<>(NOT_FOUND_MUSIC);
         } catch (NotFoundMusicReplyException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC_REPLY);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 

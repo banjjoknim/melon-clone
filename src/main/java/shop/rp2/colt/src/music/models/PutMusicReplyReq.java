@@ -7,6 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PutMusicReplyReq {
 
-    private Long userId;
     private String comment;
 }
