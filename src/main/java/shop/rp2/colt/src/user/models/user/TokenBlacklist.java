@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicInsert;
 import shop.rp2.colt.config.BaseTimeEntity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @DynamicInsert
@@ -23,8 +24,12 @@ public class TokenBlacklist extends BaseTimeEntity {
     @Column(name = "jwt_token")
     private String jwtToken;
 
+    @Column(name = "expiration")
+    private LocalDateTime expiration;
+
     @Builder
-    public TokenBlacklist(String token) {
+    public TokenBlacklist(String jwtToken, LocalDateTime expiration) {
         this.jwtToken = jwtToken;
+        this.expiration = expiration;
     }
 }

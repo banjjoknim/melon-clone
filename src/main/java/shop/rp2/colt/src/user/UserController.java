@@ -63,7 +63,7 @@ public class UserController {
         try {
             return new BaseResponse<>(SUCCESS_POST_USER_TOKEN, userService.createUserToken(request));
         } catch (IllegalArgumentException e) {
-            if (e.getMessage().equals("존재하지 않는 아이디입니다.")) {
+            if (e.getMessage().equals(NOT_FOUND_USER_ID_NAME.getMessage())) {
                 return new BaseResponse<>(NOT_FOUND_USER_ID_NAME);
             }
             return new BaseResponse<>(NOT_CORRECT_PASSWORD);
@@ -72,9 +72,13 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public BaseResponse<Long> deleteLoginUser(@RequestBody PostLogoutUserReq request) {
+    public BaseResponse<Long> deleteLoginUser() {
 
-        return new BaseResponse<>(SUCCESS_LOGOUT, userService.addTokenInBlacklist(request));
+        try {
+            return new BaseResponse<>(SUCCESS_LOGOUT, userService.addTokenInBlacklist());
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
+        }
     }
 
     // 회원정보수정

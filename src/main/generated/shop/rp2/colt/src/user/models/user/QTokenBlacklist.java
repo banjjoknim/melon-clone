@@ -24,6 +24,8 @@ public class QTokenBlacklist extends EntityPathBase<TokenBlacklist> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final DateTimePath<java.time.LocalDateTime> expiration = createDateTime("expiration", java.time.LocalDateTime.class);
+
     public final StringPath jwtToken = createString("jwtToken");
 
     public final NumberPath<Long> tokenBlacklistId = createNumber("tokenBlacklistId", Long.class);

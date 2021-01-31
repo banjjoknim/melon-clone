@@ -48,7 +48,8 @@ public class MusicProvider {
                         singer.singerName,
                         album.albumImage,
                         singer.country,
-                        Expressions.stringTemplate("DATE_FORMAT({0}, '%Y.%m.%d')", album.releaseDate)))
+                        Expressions.stringTemplate("DATE_FORMAT({0}, '%Y.%m.%d')", album.releaseDate))
+                )
                 .from(music)
                 .innerJoin(album).on(music.albumId.eq(album.albumId))
                 .innerJoin(singer).on(album.albumId.eq(singer.singerId))

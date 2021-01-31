@@ -138,6 +138,9 @@ public class MusicController {
         try {
             return new BaseResponse<>(SUCCESS_POST_MUSIC_REPLY, musicReplyService.createMusicReply(musicId, postMusicReplyReq));
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals(NOT_FOUND_USER.getMessage())) {
+                return new BaseResponse<>(NOT_FOUND_USER);
+            }
             return new BaseResponse<>(NOT_INPUT_CONTENT);
         } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
@@ -190,6 +193,9 @@ public class MusicController {
         try {
             return new BaseResponse<>(SUCCESS_POST_REPLY_ON_MUSIC_REPLY, musicReplyService.createReplyOnMusicReply(musicId, replyId, request));
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals(NOT_FOUND_USER.getMessage())) {
+                return new BaseResponse<>(NOT_FOUND_USER);
+            }
             return new BaseResponse<>(NOT_INPUT_CONTENT);
         } catch (NotFoundMusicException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC);
@@ -207,13 +213,15 @@ public class MusicController {
     ) {
         try {
             if (request.getLiked().name().equals("Y")) {
-                return new BaseResponse<>(SUCCESS_POST_LIKED_ON_MUSIC_REPLY, musicReplyService.updateLikedOnMusicReply(replyId, request));
+                return new BaseResponse<>(SUCCESS_POST_LIKED_ON_MUSIC_REPLY, musicReplyService.updateLikedOnMusicReply(musicId, replyId, request));
             }
-            return new BaseResponse<>(SUCCESS_POST_DISLIKED_ON_MUSIC_REPLY, musicReplyService.updateLikedOnMusicReply(replyId, request));
+            return new BaseResponse<>(SUCCESS_POST_DISLIKED_ON_MUSIC_REPLY, musicReplyService.updateLikedOnMusicReply(musicId, replyId, request));
         } catch (IllegalArgumentException e) {
             return new BaseResponse<>(FAILED_TO_PUT_LIKED_ON_MUSIC_REPLY);
         } catch (NotFoundMusicReplyException e) {
             return new BaseResponse<>(NOT_FOUND_MUSIC_REPLY);
+        } catch (BaseException e) {
+            return new BaseResponse<>(INVALID_JWT);
         }
     }
 

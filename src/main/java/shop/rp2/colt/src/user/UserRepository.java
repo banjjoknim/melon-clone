@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsUserByUserId(Long userId);
 
+    boolean existsUserByCellPhone(String cellPhone);
+
     @Transactional
     @Modifying
     @Query(value = "update User u set u.cellPhone = :cellPhone, u.email = :email, u.nickname = :nickname, u.userImage = :userImage where u.userId = :userId")

@@ -1,9 +1,6 @@
 package shop.rp2.colt.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -11,6 +8,8 @@ import shop.rp2.colt.config.BaseException;
 import shop.rp2.colt.config.secret.Secret;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import static shop.rp2.colt.config.BaseResponseStatus.EMPTY_JWT;
@@ -29,7 +28,7 @@ public class JwtService {
                 .setHeaderParam("typ", "JWT")
                 .claim("userId", userId)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis() / 1000 * 60 * 60 * 24)) // 24시간 뒤 만료
+                .setExpiration(new Date(now.getTime() + 1000 * 60 * 60 * 24)) // 24시간 뒤 만료
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
@@ -69,5 +68,24 @@ public class JwtService {
 
         // 3. userId 추출
         return claims.getBody().get("userId", Integer.class).longValue();
+    }
+
+    // 만료 날짜 추출
+    public LocalDateTime getExpiration() throws BaseException {
+        String accessToken = getJwt();
+        if (accessToken.isBlank()){
+            throw new BaseException(EMPTY_JWT);
+        }
+
+        Jws<Claims> claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+
+        return LocalDateTime.ofInstant(claims.getBody().getExpiration().toInstant(), ZoneId.systemDefault());
     }
 }

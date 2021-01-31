@@ -8,7 +8,6 @@ import shop.rp2.colt.config.FlagYN;
 @Getter
 public class PutLikedOnMusicReplyReq {
 
-    private Long userId;
     private FlagYN liked;
 
 }
