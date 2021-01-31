@@ -1,4 +1,4 @@
-package shop.rp2.colt.src.user.models;
+package shop.rp2.colt.src.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import shop.rp2.colt.src.user.models.User;
 
 import java.util.Optional;
 
@@ -26,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Integer updateUserById(@Param("cellPhone") String cellPhone, @Param("email") String email, @Param("nickname") String nickname, @Param("userImage") String userImage, @Param("userId") Long userId);
 
     Optional<User> findUserByEmail(String email);
+
+    Optional<User> findUserByUserIdNameAndUserPassword(String userIdName, String userPassword);
 }

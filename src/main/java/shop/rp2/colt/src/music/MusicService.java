@@ -3,12 +3,14 @@ package shop.rp2.colt.src.music;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
+import shop.rp2.colt.config.BaseException;
 import shop.rp2.colt.src.album.AlbumRepository;
 import shop.rp2.colt.src.album.exception.NotFoundAlbumException;
+import shop.rp2.colt.src.music.exception.NotFoundMusicException;
 import shop.rp2.colt.src.music.models.Music;
 import shop.rp2.colt.src.music.models.MusicLikedUser;
-import shop.rp2.colt.src.music.models.putMusicLikedUserReq;
 import shop.rp2.colt.src.music.models.PutMusicReq;
+import shop.rp2.colt.utils.JwtService;
 
 @Service
 public class MusicService {
@@ -16,12 +18,14 @@ public class MusicService {
     private final MusicRepository musicRepository;
     private final MusicLikedUserRepository musicLikedUserRepository;
     private final AlbumRepository albumRepository;
+    private final JwtService jwtService;
 
     @Autowired
-    public MusicService(MusicRepository musicRepository, MusicLikedUserRepository musicLikedUserRepository, AlbumRepository albumRepository) {
+    public MusicService(MusicRepository musicRepository, MusicLikedUserRepository musicLikedUserRepository, AlbumRepository albumRepository, JwtService jwtService) {
         this.musicRepository = musicRepository;
         this.musicLikedUserRepository = musicLikedUserRepository;
         this.albumRepository = albumRepository;
+        this.jwtService = jwtService;
     }
 
     public Long createMusic(Music music) {
@@ -51,12 +55,21 @@ public class MusicService {
         return musicId;
     }
 
-    public Long updateLikeOnMusicById(Long musicId, putMusicLikedUserReq request) {
-        if (musicLikedUserRepository.existsMusicLikedUserByMusicIdAndUserId(musicId, request.getUserId())) {
-            musicLikedUserRepository.deleteMusicLikedUserById(musicId, request.getUserId());
+    // 곡 좋아요 또는 좋아요 취소
+    public Long updateLikeOnMusicById(Long musicId) throws BaseException {
+
+        Long userId = jwtService.getUserId();
+        if (!musicLikedUserRepository.existsMusicLikedUserByUserId(userId)) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+        if (!musicRepository.existsMusicByMusicId(musicId)){
+            throw new NotFoundMusicException("존재하지 않는 곡입니다.");
+        }
+        if (musicLikedUserRepository.existsMusicLikedUserByMusicIdAndUserId(musicId, userId)) {
+            musicLikedUserRepository.deleteMusicLikedUserById(musicId, userId);
             return musicId;
         }
-        MusicLikedUser musicLikedUser = new MusicLikedUser(request.getUserId(), musicId);
+        MusicLikedUser musicLikedUser = new MusicLikedUser(userId, musicId);
         musicLikedUserRepository.save(musicLikedUser);
         return musicId;
     }

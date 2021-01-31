@@ -3,13 +3,10 @@ package shop.rp2.colt.src.music.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.format.annotation.DateTimeFormat;
 import shop.rp2.colt.config.BaseTimeEntity;
 import shop.rp2.colt.config.FlagYN;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 
 @NoArgsConstructor

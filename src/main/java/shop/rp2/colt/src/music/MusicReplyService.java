@@ -2,9 +2,11 @@ package shop.rp2.colt.src.music;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import shop.rp2.colt.config.BaseException;
 import shop.rp2.colt.src.music.exception.NotFoundMusicException;
 import shop.rp2.colt.src.music.exception.NotFoundMusicReplyException;
 import shop.rp2.colt.src.music.models.*;
+import shop.rp2.colt.utils.JwtService;
 
 @Service
 public class MusicReplyService {
@@ -12,35 +14,40 @@ public class MusicReplyService {
     private final MusicRepository musicRepository;
     private final MusicReplyRepository musicReplyRepository;
     private final MusicReplyLikedUserRepository musicReplyLikedUserRepository;
+    private final JwtService jwtService;
 
     @Autowired
-    public MusicReplyService(MusicRepository musicRepository, MusicReplyRepository musicReplyRepository, MusicReplyLikedUserRepository musicReplyLikedUserRepository) {
+    public MusicReplyService(MusicRepository musicRepository, MusicReplyRepository musicReplyRepository, MusicReplyLikedUserRepository musicReplyLikedUserRepository, JwtService jwtService) {
         this.musicRepository = musicRepository;
         this.musicReplyRepository = musicReplyRepository;
         this.musicReplyLikedUserRepository = musicReplyLikedUserRepository;
+        this.jwtService = jwtService;
     }
 
-    public Long createMusicReply(Long musicId, PostMusicReplyReq request) {
-        if (request.getComment() == null) {
+    public Long createMusicReply(Long musicId, PostMusicReplyReq request) throws BaseException {
+        if (request.getComment().isBlank()) {
             throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
         }
         if (!musicRepository.existsMusicByMusicId(musicId)) {
             throw new NotFoundMusicException("존재하지 않는 곡입니다");
         }
-        MusicReply reply = new MusicReply(musicId, request.getUserId(), request.getComment());
+        MusicReply reply = new MusicReply(musicId, jwtService.getUserId(), request.getComment());
         musicReplyRepository.save(reply);
 
         return reply.getReplyId();
     }
 
-    public Long updateMusicReplyById(Long musicId, Long replyId, PutMusicReplyReq request) {
+    public Long updateMusicReplyById(Long musicId, Long replyId, PutMusicReplyReq request) throws BaseException {
         if (!musicRepository.existsMusicByMusicId(musicId)) {
             throw new NotFoundMusicException("존재하지 않는 곡입니다");
         }
-        if (request.getComment() == null) {
-            throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
+        if (!musicReplyRepository.existsMusicReplyByMusicIdAndReplyId(musicId, replyId)) {
+            throw new IllegalArgumentException("존재하지 않는 댓글입니다.");
         }
-        if (!request.getUserId().equals(musicReplyRepository.findById(replyId).get().getUserId())) {
+        if (request.getComment().isBlank()) {
+            throw new IllegalArgumentException("댓글 내용을 입력하지 않았습니다.");
+        }
+        if (!jwtService.getUserId().equals(musicReplyRepository.findById(replyId).get().getUserId())) {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
         musicReplyRepository.updateMusicReply(replyId, request.getComment());
@@ -48,8 +55,12 @@ public class MusicReplyService {
         return replyId;
     }
 
-    public Long deleteMusicReplyById(Long replyId, DeleteMusicReplyReq request) {
-        if (!request.getUserId().equals(musicReplyRepository.findById(replyId).get().getUserId())) {
+    public Long deleteMusicReplyById(Long musicId, Long replyId) throws BaseException {
+        musicRepository.findById(musicId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 곡입니다."));
+        musicReplyRepository.findById(replyId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        if (!jwtService.getUserId().equals(musicReplyRepository.findById(replyId).get().getUserId())) {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
         musicReplyRepository.deleteByReplyId(replyId);
@@ -57,14 +68,13 @@ public class MusicReplyService {
         return replyId;
     }
 
-    public Long createReplyOnMusicReply(Long musicId, Long belongToReplyId, PostReplyOnMusicReplyReq request) {
-        if (request.getComment() == null) {
+    public Long createReplyOnMusicReply(Long musicId, Long belongToReplyId, PostReplyOnMusicReplyReq request) throws BaseException {
+        if (request.getComment().isBlank()) {
             throw new IllegalArgumentException("내용을 입력해주세요.");
         }
-        if (musicReplyRepository.findById(belongToReplyId).isEmpty()) {
-            throw new NotFoundMusicReplyException("존재하지 않는 댓글입니다.");
-        }
-        MusicReply reply = new MusicReply(musicId, request.getUserId(), request.getComment(), belongToReplyId);
+        musicRepository.findById(musicId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 곡입니다."));
+        musicReplyRepository.findById(belongToReplyId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        MusicReply reply = new MusicReply(musicId, jwtService.getUserId(), request.getComment(), belongToReplyId);
         musicReplyRepository.save(reply);
 
         return reply.getReplyId();

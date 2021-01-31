@@ -20,20 +20,23 @@ import static shop.rp2.colt.config.BaseResponseStatus.INVALID_JWT;
 public class JwtService {
     /**
      * JWT 생성
-     * @param userId
-     * @return String
+     * // @param userId
+     * // @return String
      */
-    public String createJwt(int userId) {
+    public String createJwt(Long userId) {
         Date now = new Date();
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .claim("userId", userId)
                 .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis() / 1000 * 60 * 60 * 24)) // 24시간 뒤 만료
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
 
     /**
      * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
+     *
      * @return String
      */
     public String getJwt() {
@@ -43,10 +46,11 @@ public class JwtService {
 
     /**
      * JWT에서 userId 추출
-     * @return int
+     *
+     * @return long
      * @throws BaseException
      */
-    public int getUserId() throws BaseException {
+    public Long getUserId() throws BaseException {
         // 1. JWT 추출
         String accessToken = getJwt();
         if (accessToken == null || accessToken.length() == 0) {
@@ -64,6 +68,6 @@ public class JwtService {
         }
 
         // 3. userId 추출
-        return claims.getBody().get("userId", Integer.class);
+        return claims.getBody().get("userId", Integer.class).longValue();
     }
 }

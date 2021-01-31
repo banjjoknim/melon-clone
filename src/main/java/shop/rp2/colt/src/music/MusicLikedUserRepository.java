@@ -19,4 +19,6 @@ public interface MusicLikedUserRepository extends JpaRepository<MusicLikedUser, 
 
     boolean existsMusicLikedUserByMusicIdAndUserId(Long musicId, Long userId);
 
+    boolean existsMusicLikedUserByUserId(Long userId);
+
 }

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GetUserLikesRes {
+public class PostLogoutUserReq {
 
+    private String token;
 }
